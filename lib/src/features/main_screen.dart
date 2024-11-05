@@ -14,6 +14,9 @@ class _MainScreenState extends State<MainScreen> {
     // TODO: initiate controllers
   }
 
+  final TextEditingController _controller = TextEditingController();
+  Future<String>? city;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
