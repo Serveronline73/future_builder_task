@@ -77,6 +77,9 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   @override
+  //Eine .dispose()Methode ist ein Rückruf, den wir verwenden,
+  // wenn wir die Verwendung von etwas beenden möchten.
+  // Quelle stackoverflow.com
   void dispose() {
     _controller.dispose();
     super.dispose();
