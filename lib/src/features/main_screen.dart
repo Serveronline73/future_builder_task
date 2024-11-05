@@ -11,11 +11,14 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    // TODO: initiate controllers
+  }
+
+  void _searchCity() {
+    _city = getCityFromZip(_controller.text);
   }
 
   final TextEditingController _controller = TextEditingController();
-  Future<String>? city;
+  Future<String>? _city;
 
   @override
   Widget build(BuildContext context) {
@@ -24,21 +27,38 @@ class _MainScreenState extends State<MainScreen> {
         padding: const EdgeInsets.all(8.0),
         child: Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const TextField(
-                decoration: InputDecoration(
+              TextField(
+                controller: _controller,
+                decoration: const InputDecoration(
                     border: OutlineInputBorder(), labelText: "Postleitzahl"),
               ),
               const SizedBox(height: 32),
               OutlinedButton(
                 onPressed: () {
-                  // TODO: implementiere Suche
+                  setState(() {
+                    _city = getCityFromZip(_controller.text);
+                  });
                 },
                 child: const Text("Suche"),
               ),
               const SizedBox(height: 32),
-              Text("Ergebnis: Noch keine PLZ gesucht",
-                  style: Theme.of(context).textTheme.labelLarge),
+              FutureBuilder(
+                  future: getCityFromZip("City"),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      return const Text("Fehler beim Laden der Stadt");
+                    } else if (snapshot.hasData) {
+                      return Text(
+                        "Ergebnis: ${snapshot.data}",
+                      );
+                    } else {
+                      return const Text("Noch keine PLZ gesucht");
+                    }
+                  }),
             ],
           ),
         ),
