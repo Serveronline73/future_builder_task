@@ -13,16 +13,13 @@ class _MainScreenState extends State<MainScreen> {
     super.initState();
   }
 
-  void _searchCity() {
-    _city = getCityFromZip(_controller.text);
-  }
-
   final TextEditingController _controller = TextEditingController();
-  Future<String>? _city;
+  Future<String>? _getCityFromZip;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Center(
@@ -30,33 +27,46 @@ class _MainScreenState extends State<MainScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TextField(
+                style: const TextStyle(color: Colors.amber),
                 controller: _controller,
                 decoration: const InputDecoration(
-                    border: OutlineInputBorder(), labelText: "Postleitzahl"),
+                    labelStyle: TextStyle(color: Colors.amber),
+                    border: OutlineInputBorder(),
+                    labelText: "Postleitzahl"),
               ),
               const SizedBox(height: 32),
               OutlinedButton(
                 onPressed: () {
                   setState(() {
-                    _city = getCityFromZip(_controller.text);
+                    _getCityFromZip = getCityFromZip(_controller.text);
                   });
                 },
-                child: const Text("Suche"),
+                child: const Text(
+                  "Suche",
+                  style: TextStyle(color: Colors.amber),
+                ),
               ),
               const SizedBox(height: 32),
               FutureBuilder(
-                  future: getCityFromZip("City"),
+                  future: _getCityFromZip,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const CircularProgressIndicator();
                     } else if (snapshot.hasError) {
-                      return const Text("Fehler beim Laden der Stadt");
+                      return const Text(
+                        "Fehler beim Laden der Stadt",
+                        style: TextStyle(color: Colors.amber),
+                      );
                     } else if (snapshot.hasData) {
                       return Text(
                         "Ergebnis: ${snapshot.data}",
+                        style: const TextStyle(color: Colors.amber),
                       );
                     } else {
-                      return const Text("Noch keine PLZ gesucht");
+                      return const Text(
+                        "Noch keine PLZ gesucht",
+                        style: TextStyle(color: Colors.amber),
+                      );
                     }
                   }),
             ],
@@ -68,7 +78,7 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void dispose() {
-    // TODO: dispose controllers
+    _controller.dispose();
     super.dispose();
   }
 
@@ -77,6 +87,8 @@ class _MainScreenState extends State<MainScreen> {
     await Future.delayed(const Duration(seconds: 3));
 
     switch (zip) {
+      case "44866":
+        return "Bochum Wattenscheid";
       case "10115":
         return 'Berlin';
       case "20095":
